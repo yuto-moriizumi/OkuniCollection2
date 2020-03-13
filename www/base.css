@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "MisakiGothic";
+  src: url("MisakiGothic.ttf") format("truetype");
+}
+
+p {
+  font-family: "MisakiGothic";
+  color: #ff0000;
+}
