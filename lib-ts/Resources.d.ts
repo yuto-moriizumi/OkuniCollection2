@@ -3,6 +3,7 @@ declare const Resource: Readonly<{
         Title: {
             Bg: string;
         };
+        Magic: string;
         BattleBgFores: string[];
         BattleBgMiddles: string[];
         BattleBgBacks: string[];

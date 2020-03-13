@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import Scene from "./Scene";
 import SoundManager from "./SoundManager";
+import Countries from "./Countries";
 
 export default class GameManager {
   public static instance: GameManager;
@@ -8,6 +9,7 @@ export default class GameManager {
   private sceneTransitionOutFinished: boolean = true;
   private currentScene?: Scene;
   private sceneResourceLoaded: boolean = true;
+  public countries = new Array();
 
   constructor(app: PIXI.Application) {
     if (GameManager.instance) {
@@ -36,6 +38,11 @@ export default class GameManager {
       }
     });
     SoundManager.init();
+
+    //デフォルト国家を所持リストに追加
+    for (const country of Countries) {
+      if (country.isDefault) this.instance.countries.push(country);
+    }
   }
 
   //可能であれば新しいシーンへのトランジションを開始する

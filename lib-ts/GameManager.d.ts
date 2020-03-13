@@ -6,6 +6,7 @@ export default class GameManager {
     private sceneTransitionOutFinished;
     private currentScene?;
     private sceneResourceLoaded;
+    countries: any[];
     constructor(app: PIXI.Application);
     static start(params: {
         glWidth: number;
