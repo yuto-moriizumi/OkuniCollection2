@@ -17,7 +17,7 @@ export default class CombineScene extends Scene {
   private flagMarginTop: number = 30;
   private flagFirstX: number = 0;
   private flagFirstY: number = 0;
-  private circleChildren: Array<number> = [];
+  private circleChildren: Array<number>;
 
   constructor() {
     super();
@@ -151,8 +151,7 @@ export default class CombineScene extends Scene {
       //魔法陣の中に入っていたら
       console.log("inCircle!");
       const position = e.data.getLocalPosition(this.circle);
-      this.removeChild(sprite);
-      this.circle.addChild(sprite);
+      sprite.setParent(this.circle);
       sprite.x = position.x - this.flagFirstX;
       sprite.y = position.y - this.flagFirstY;
       sprite.filters = [
@@ -165,10 +164,15 @@ export default class CombineScene extends Scene {
       this.circleChildren.push(id);
 
       //合成判定
-      /*
-      for (const country of Countries) {
-        if (country.from === undefined) continue;
-      }*/
+      this.circleChildren = this.circleChildren.sort();
+      GameManager.instance.countries.forEach(country => {
+        if (this.circleChildren.length !== country.from.length) return;
+        country.from = country.from.sort();
+        for (let i = 0; i < this.circleChildren.length; i++) {
+          if (country.from[i] !== this.circleChildren[i]) return;
+        }
+        
+      });
     }
   }
 }

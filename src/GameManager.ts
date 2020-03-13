@@ -39,7 +39,7 @@ export default class GameManager {
     });
     SoundManager.init();
 
-    //デフォルト国家を所持リストに追加
+    //国情報をロード
     const req = new XMLHttpRequest();
     req.open("GET", "countries.json");
     req.send(null);
@@ -54,6 +54,7 @@ export default class GameManager {
           this.instance.countries.set(id, new Country(country));
         }
       }
+      console.log(GameManager.instance.countries);
     });
     req.addEventListener("error", () => console.log("json error"));
   }
