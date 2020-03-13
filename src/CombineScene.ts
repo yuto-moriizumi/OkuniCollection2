@@ -12,6 +12,8 @@ export default class CombineScene extends Scene {
   private sidebarPadding: number = 40;
   private flagHeight: number = 100;
   private flagMarginTop: number = 30;
+  private flagFirstX: number = 0;
+  private flagFirstY: number = 0;
 
   constructor() {
     super();
@@ -75,8 +77,11 @@ export default class CombineScene extends Scene {
       );
       sprite.x = this.sidebarPadding;
       sprite.y = i * this.flagHeight + this.flagMarginTop;
-      sprite.on("touchstart", () => this.onFlagClicked(i, sprite));
       sprite.buttonMode = true;
+      sprite.interactive = true;
+      sprite.on("mousedown", (e: PIXI.interaction.InteractionEvent) =>
+        this.onFlagClicked(e, i)
+      );
       this.sidebar.addChild(sprite);
     }
   }
@@ -85,7 +90,37 @@ export default class CombineScene extends Scene {
     super.update(dt);
   }
 
-  private onFlagClicked(id: number, sprite: PIXI.Sprite) {
-    sprite.off("touchstart");
+  private onFlagClicked(e: PIXI.interaction.InteractionEvent, id: number) {
+    const sprite = e.currentTarget as PIXI.Sprite;
+    console.log("flag!");
+    sprite.off("mousedown");
+    const localPosition = e.data.getLocalPosition(sprite);
+    const position = e.data.getLocalPosition(this);
+    this.sidebar.removeChild(sprite);
+    this.addChild(sprite);
+    sprite.x = position.x - localPosition.x * sprite.scale.x;
+    sprite.y = position.y - localPosition.y * sprite.scale.y;
+    this.flagFirstX = localPosition.x * sprite.scale.x;
+    this.flagFirstY = localPosition.y * sprite.scale.y;
+    console.log(["moveto", sprite.x, sprite.y]);
+    sprite.on("mousemove", e => this.onFlagMove(e, id));
+    sprite.on("mouseup", e => this.onFlagUp(e, id));
+  }
+
+  private onFlagMove(e, id: number) {
+    console.log("flagmove");
+    const sprite = e.currentTarget as PIXI.Sprite;
+    const localPosition = e.data.getLocalPosition(sprite);
+    const position = e.data.getLocalPosition(this);
+    sprite.x = position.x - this.flagFirstX;
+    sprite.y = position.y - this.flagFirstY;
+  }
+
+  private onFlagUp(e, id: number) {
+    console.log("flagmove");
+    const sprite = e.currentTarget as PIXI.Sprite;
+    sprite.off("mousemove");
+    sprite.off("mouseup");
+    sprite.on("mousedown", e => this.onFlagClicked(e, id));
   }
 }
