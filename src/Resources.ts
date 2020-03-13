@@ -2,6 +2,10 @@ import Scene from "./Scene";
 
 const Resource = Object.freeze({
   Static: {
+    Title: {
+      Bg: "sekaichizu.png"
+    },
+    Magic: "mahoujin1.png",
     BattleBgFores: ["chang.png"],
     BattleBgMiddles: ["sun.png"],
     BattleBgBacks: ["wang.png"],

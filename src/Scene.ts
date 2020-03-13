@@ -4,7 +4,6 @@ import Transition from "./Transition";
 import Immediate from "./Immediate";
 import LoaderAddParam from "./LoaderAddParam";
 import GameManager from "./GameManager";
-import Resource from "./Resources";
 
 export default abstract class Scene extends PIXI.Container {
   protected transitionIn: Transition = new Immediate();

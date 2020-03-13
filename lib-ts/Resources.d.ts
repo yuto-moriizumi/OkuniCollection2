@@ -1,5 +1,8 @@
 declare const Resource: Readonly<{
     Static: {
+        Title: {
+            Bg: string;
+        };
         BattleBgFores: string[];
         BattleBgMiddles: string[];
         BattleBgBacks: string[];

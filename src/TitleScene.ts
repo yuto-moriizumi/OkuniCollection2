@@ -4,12 +4,11 @@ import Fade from "./Fade";
 import GameManager from "./GameManager";
 import LoaderAddParam from "./LoaderAddParam";
 import Resource from "./Resources";
-import Sound from "./Sound";
+import CombineScene from "./CombineScene";
 
 export default class TitleScene extends Scene {
   private text!: PIXI.Text;
-  private sound: Sound | null = null;
-  private readonly textAppealDuration: number = 200;
+  private readonly textAppealDuration: number = 150;
 
   constructor() {
     super();
@@ -21,10 +20,8 @@ export default class TitleScene extends Scene {
   protected createInitialResourceList(): (LoaderAddParam | string)[] {
     let assets = super.createInitialResourceList();
     const staticResource = Resource.Static;
-    assets = assets.concat(staticResource.BattleBgFores.slice(0, 1));
-    assets = assets.concat(staticResource.BattleBgMiddles.slice(0, 1));
-    assets = assets.concat(staticResource.BattleBgBacks.slice(0, 1));
     assets.push(staticResource.Audio.Bgm.Title);
+    assets.push(staticResource.Title.Bg);
     console.log(assets);
     return assets;
   }
@@ -33,24 +30,28 @@ export default class TitleScene extends Scene {
   protected onResourceLoaded(): void {
     super.onResourceLoaded();
     const resources = GameManager.instance.game.loader.resources;
-    const bgOrder = [
-      Resource.Static.BattleBgBacks,
-      Resource.Static.BattleBgMiddles,
-      Resource.Static.BattleBgFores
-    ];
-    for (const bgs of bgOrder) {
-      for (let i = 0; i < bgs.length; i++) {
-        try {
-          const sprite = new PIXI.Sprite(resources[bgs[i]].texture);
-          sprite.position.set(sprite.width * i, 0);
-          this.addChild(sprite);
-        } catch (error) {
-          console.log([bgs, i, error]);
-          console.log(resources);
-        }
-      }
-    }
     const renderer = GameManager.instance.game.renderer;
+
+    //背景
+    const sprite = new PIXI.Sprite(resources[Resource.Static.Title.Bg].texture);
+    sprite.width = renderer.width;
+    sprite.height = renderer.height;
+    this.addChild(sprite);
+
+    const text = new PIXI.Text(
+      "オクニコレクション２",
+      new PIXI.TextStyle({
+        fontFamily: "MisakiGothic",
+        fontSize: 110,
+        fill: 0xffffff,
+        padding: 12,
+        dropShadow: true
+      })
+    );
+    text.anchor.set(0.5, 0.5);
+    text.position.set(renderer.width * 0.5, renderer.height * 0.4);
+    this.addChild(text);
+
     this.text = new PIXI.Text(
       "TOUCH TO START",
       new PIXI.TextStyle({
@@ -61,23 +62,15 @@ export default class TitleScene extends Scene {
       })
     );
     this.text.anchor.set(0.5, 0.5);
-    this.text.position.set(renderer.width * 0.5, renderer.height * 0.5);
+    this.text.position.set(renderer.width * 0.5, renderer.height * 0.6);
     this.addChild(this.text);
     this.interactive = true;
-    this.on("pointerup", () => this.showOrderScene());
-
-    this.sound = new Sound(
-      (resources[Resource.Static.Audio.Bgm.Title] as any).buffer
-    );
-    this.sound.volume = 0.25;
+    this.buttonMode = true;
+    this.on("pointerdown", () => this.onPointerDown());
   }
 
-  //タップされたときのコールバック
-  public showOrderScene(): void {
-    console.log("should go to order scene");
-    if (this.sound && this.sound.isPlayed)
-      this.sound.isPaused ? this.sound.resume() : this.sound.pause();
-    if (!this.sound.isPlayed) this.sound.play();
+  private onPointerDown() {
+    GameManager.loadScene(new CombineScene());
   }
 
   public update(dt: number) {

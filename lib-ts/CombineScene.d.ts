@@ -1,11 +1,9 @@
 import Scene from "./Scene";
 import LoaderAddParam from "./LoaderAddParam";
-export default class TitleScene extends Scene {
-    private text;
-    private readonly textAppealDuration;
+export default class CombineScene extends Scene {
+    private sound;
     constructor();
     protected createInitialResourceList(): (LoaderAddParam | string)[];
     protected onResourceLoaded(): void;
-    private onPointerDown;
     update(dt: number): void;
 }
