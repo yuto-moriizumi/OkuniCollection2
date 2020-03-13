@@ -5,15 +5,19 @@ import GameManager from "./GameManager";
 import LoaderAddParam from "./LoaderAddParam";
 import Resource from "./Resources";
 import Sound from "./Sound";
+import * as Filters from "pixi-filters";
+import Country from "./Country";
 
 export default class CombineScene extends Scene {
   private sound: Sound | null = null;
   private sidebar: PIXI.Graphics;
+  private circle: PIXI.Sprite;
   private sidebarPadding: number = 40;
   private flagHeight: number = 100;
   private flagMarginTop: number = 30;
   private flagFirstX: number = 0;
   private flagFirstY: number = 0;
+  private circleChildren: Array<number> = [];
 
   constructor() {
     super();
@@ -42,9 +46,9 @@ export default class CombineScene extends Scene {
     let assets = super.createInitialResourceList();
     const staticResource = Resource.Static;
     assets.push(staticResource.Magic);
-    for (const country of GameManager.instance.countries) {
-      assets.push(country.img);
-    }
+    GameManager.instance.countries.forEach((country: Country) =>
+      assets.push(country.img)
+    );
     return assets;
   }
 
@@ -62,15 +66,19 @@ export default class CombineScene extends Scene {
     //this.sound.play();
 
     //魔法陣を表示
-    const circle = new PIXI.Sprite(resources[Resource.Static.Magic].texture);
-    circle.anchor.set(0.5, 0.5);
-    circle.x = renderer.width * 0.3;
-    circle.y = renderer.height * 0.5;
-    this.addChild(circle);
+    this.circle = new PIXI.Sprite(resources[Resource.Static.Magic].texture);
+    this.circle.anchor.set(0.5, 0.5);
+    this.circle.x = renderer.width * 0.3;
+    this.circle.y = renderer.height * 0.5;
+    this.addChild(this.circle);
 
     //サイドバーに国旗を表示
-    for (let i = 0; i < GameManager.instance.countries.length; i++) {
-      const country = GameManager.instance.countries[i];
+    let i = 0;
+    GameManager.instance.countries.forEach((country, id) => {
+      if (!country.isOwn) return;
+      //});
+      //for (let i = 0; i < GameManager.instance.countries.size; i++) {
+
       const sprite = new PIXI.Sprite(resources[country.img].texture);
       sprite.scale.set(
         (this.sidebar.width - this.sidebarPadding * 2) / sprite.width
@@ -80,10 +88,11 @@ export default class CombineScene extends Scene {
       sprite.buttonMode = true;
       sprite.interactive = true;
       sprite.on("mousedown", (e: PIXI.interaction.InteractionEvent) =>
-        this.onFlagClicked(e, i)
+        this.onFlagClicked(e, id)
       );
       this.sidebar.addChild(sprite);
-    }
+      i++;
+    });
   }
 
   public update(dt: number) {
@@ -103,24 +112,63 @@ export default class CombineScene extends Scene {
     this.flagFirstX = localPosition.x * sprite.scale.x;
     this.flagFirstY = localPosition.y * sprite.scale.y;
     console.log(["moveto", sprite.x, sprite.y]);
-    sprite.on("mousemove", e => this.onFlagMove(e, id));
-    sprite.on("mouseup", e => this.onFlagUp(e, id));
+    sprite.on("mousemove", (e: PIXI.interaction.InteractionEvent) =>
+      this.onFlagMove(e, id)
+    );
+    sprite.on("mouseup", (e: PIXI.interaction.InteractionEvent) =>
+      this.onFlagUp(e, id)
+    );
   }
 
-  private onFlagMove(e, id: number) {
-    console.log("flagmove");
+  private onFlagMove(e: PIXI.interaction.InteractionEvent, id: number) {
     const sprite = e.currentTarget as PIXI.Sprite;
-    const localPosition = e.data.getLocalPosition(sprite);
     const position = e.data.getLocalPosition(this);
     sprite.x = position.x - this.flagFirstX;
     sprite.y = position.y - this.flagFirstY;
   }
 
-  private onFlagUp(e, id: number) {
+  private onFlagUp(e: PIXI.interaction.InteractionEvent, id: number) {
     console.log("flagmove");
     const sprite = e.currentTarget as PIXI.Sprite;
     sprite.off("mousemove");
     sprite.off("mouseup");
-    sprite.on("mousedown", e => this.onFlagClicked(e, id));
+    sprite.on("mousedown", (e: PIXI.interaction.InteractionEvent) =>
+      this.onFlagClicked(e, id)
+    );
+
+    //魔法陣の中に入ったか計算
+    const circleCenterX = this.circle.x;
+    const circleCenterY = this.circle.y;
+    //const circleCenterX = this.circle.x + this.circle.width / 2;
+    //const circleCenterY = this.circle.y + this.circle.height / 2;
+    const radius = Math.max(this.circle.width, this.circle.height) / 2;
+    console.log([circleCenterX, circleCenterY, radius]);
+    if (
+      Math.pow(sprite.x - circleCenterX, 2) +
+        Math.pow(sprite.y - circleCenterY, 2) <=
+      Math.pow(radius, 2)
+    ) {
+      //魔法陣の中に入っていたら
+      console.log("inCircle!");
+      const position = e.data.getLocalPosition(this.circle);
+      this.removeChild(sprite);
+      this.circle.addChild(sprite);
+      sprite.x = position.x - this.flagFirstX;
+      sprite.y = position.y - this.flagFirstY;
+      sprite.filters = [
+        new Filters.GlowFilter({
+          distance: 15,
+          outerStrength: 8,
+          color: 0xffff00
+        })
+      ];
+      this.circleChildren.push(id);
+
+      //合成判定
+      /*
+      for (const country of Countries) {
+        if (country.from === undefined) continue;
+      }*/
+    }
   }
 }

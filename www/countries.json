@@ -1,0 +1,14 @@
+{
+  "0": { "name": "イングランド王国", "img": "England.png", "isOwn": true },
+  "1": {
+    "name": "スコットランド王国",
+    "img": "Scotland.png",
+    "isOwn": true
+  },
+  "2": {
+    "name": "イングランド共和国",
+    "img": "CommonwealthOfEngland.png",
+    "isOwn": false,
+    "from": [0, 1]
+  }
+}
