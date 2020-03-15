@@ -1,20 +1,17 @@
+import * as PIXI from "pixi.js";
 import Scene from "./Scene";
 import LoaderAddParam from "./LoaderAddParam";
+import Circle from "./Circle";
 export default class CombineScene extends Scene {
     private sound;
-    private sidebar;
-    private circle;
-    private sidebarPadding;
-    private flagHeight;
-    private flagMarginTop;
-    private flagFirstX;
-    private flagFirstY;
-    private circleChildren;
+    sidebar: PIXI.Graphics;
+    circle: Circle;
+    private sidebarFlags;
+    private progressText;
+    private get flagMargin();
     constructor();
     protected createInitialResourceList(): (LoaderAddParam | string)[];
     protected onResourceLoaded(): void;
+    createSidebar(): void;
     update(dt: number): void;
-    private onFlagClicked;
-    private onFlagMove;
-    private onFlagUp;
 }

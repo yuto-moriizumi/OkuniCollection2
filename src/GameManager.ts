@@ -44,17 +44,17 @@ export default class GameManager {
     req.open("GET", "countries.json");
     req.send(null);
     req.addEventListener("load", () => {
-      console.log("json loaded");
+      //console.log("json loaded");
       const json = JSON.parse(req.responseText);
       for (const key in json) {
         if (json.hasOwnProperty(key)) {
           const country = json[key];
           console.log([key, country]);
           const id = parseInt(key);
-          this.instance.countries.set(id, new Country(country));
+          this.instance.countries.set(id, new Country(id, country));
         }
       }
-      console.log(GameManager.instance.countries);
+      //console.log(GameManager.instance.countries);
     });
     req.addEventListener("error", () => console.log("json error"));
   }

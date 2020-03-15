@@ -1,7 +1,8 @@
 export default class Country {
+    id: number;
     name: string;
     img: string;
     isOwn: boolean;
-    from: Set<number>;
-    constructor(arg: any);
+    from: Array<number>;
+    constructor(id: number, arg: any);
 }
