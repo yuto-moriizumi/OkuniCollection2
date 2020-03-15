@@ -13,5 +13,6 @@ export default class CombineScene extends Scene {
     protected createInitialResourceList(): (LoaderAddParam | string)[];
     protected onResourceLoaded(): void;
     createSidebar(): void;
+    onKingdomOfYugoslavia(): void;
     update(dt: number): void;
 }

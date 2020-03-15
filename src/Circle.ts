@@ -4,6 +4,8 @@ import Flag from "./Flag";
 import * as Filters from "pixi-filters";
 import Country from "./Country";
 import CombineScene from "./CombineScene";
+import Sound from "./Sound";
+import Resource from "./Resources";
 
 export default class Circle extends PIXI.Sprite {
   private flags: Set<Flag> = new Set<Flag>();
@@ -23,6 +25,7 @@ export default class Circle extends PIXI.Sprite {
   }
 
   public addFlag(flag: Flag, combine: boolean = true, position?: PIXI.Point) {
+    if (this.flags.has(flag)) return;
     flag.setParent(this);
     this.flags.add(flag);
     if (position) {
@@ -38,6 +41,14 @@ export default class Circle extends PIXI.Sprite {
     ];
 
     if (!combine) return; //合成モードがONでないなら終了
+
+    const resources = GameManager.instance.game.loader.resources;
+    //BGMを再生
+    const sound = new Sound(
+      (resources[Resource.Static.Audio.SE.onCircle] as any).buffer
+    );
+    sound.volume = 0.25;
+    sound.play(false);
 
     //合成判定
     let isCombined = false;
@@ -65,6 +76,7 @@ export default class Circle extends PIXI.Sprite {
       //錬成リストにある旗を魔法陣に追加
       for (const flag of this.combineList) {
         this.addFlag(flag, false);
+        if (flag.country.id === 20) this.scene.onKingdomOfYugoslavia(); //ユーゴスラビア王国
       }
       this.combineList = [];
       this.scene.createSidebar();

@@ -53,6 +53,9 @@ export default class CombineScene extends Scene {
     let assets = super.createInitialResourceList();
     const staticResource = Resource.Static;
     assets.push(staticResource.Magic);
+    assets.push(staticResource.Audio.Bgm.CombineScene);
+    assets.push(staticResource.Audio.SE.onCircle);
+    assets.push(staticResource.Audio.SE.onCombine);
     GameManager.instance.countries.forEach((country: Country) =>
       assets.push(country.img)
     );
@@ -63,13 +66,6 @@ export default class CombineScene extends Scene {
   protected onResourceLoaded(): void {
     super.onResourceLoaded();
     const resources = GameManager.instance.game.loader.resources;
-
-    //BGMを再生
-    this.sound = new Sound(
-      (resources[Resource.Static.Audio.Bgm.Title] as any).buffer
-    );
-    this.sound.volume = 0.25;
-    //this.sound.play();
 
     //魔法陣を表示
     this.circle = new Circle(this, resources[Resource.Static.Magic].texture);
@@ -129,6 +125,15 @@ export default class CombineScene extends Scene {
     }
   }
 
+  public onKingdomOfYugoslavia() {
+    const resources = GameManager.instance.game.loader.resources;
+    //BGMを再生
+    this.sound = new Sound(
+      (resources[Resource.Static.Audio.Bgm.CombineScene] as any).buffer
+    );
+    this.sound.volume = 0.25;
+    this.sound.play(false);
+  }
   public update(dt: number) {
     super.update(dt);
   }

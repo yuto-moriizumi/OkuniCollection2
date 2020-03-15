@@ -103,7 +103,8 @@
   "20": {
     "name": "ユーゴスラビア王国",
     "img": "KingdomOfYugoslavia.png",
-    "isOwn": true
+    "isOwn": false,
+    "from": [25, 26, 27, 28]
   },
   "21": {
     "name": "モンテネグロ独立国",

@@ -10,8 +10,12 @@ declare const Resource: Readonly<{
         Audio: {
             Bgm: {
                 Title: string;
+                CombineScene: string;
             };
-            SE: {};
+            SE: {
+                onCircle: string;
+                onCombine: string;
+            };
         };
     };
     FontFamily: {

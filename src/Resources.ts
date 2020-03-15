@@ -11,9 +11,13 @@ const Resource = Object.freeze({
     BattleBgBacks: ["wang.png"],
     Audio: {
       Bgm: {
-        Title: "derheiml.mp3"
+        Title: "derheiml.mp3",
+        CombineScene: "YugoslaviaK.mp3"
       },
-      SE: {}
+      SE: {
+        onCircle: "se_maoudamashii_system36.mp3",
+        onCombine: "se_maoudamashii_onepoint23.mp3"
+      }
     }
   },
   FontFamily: {
