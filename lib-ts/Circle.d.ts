@@ -7,6 +7,8 @@ export default class Circle extends PIXI.Sprite {
     scene: CombineScene;
     constructor(scene: CombineScene, texture?: PIXI.Texture);
     addFlag(flag: Flag, combine?: boolean, position?: PIXI.Point): void;
-    private combineCountry;
     removeFlag(flag: Flag): void;
+    private judge;
+    private combineCountry;
+    private playOnCircleSE;
 }

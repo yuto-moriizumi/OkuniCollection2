@@ -4,6 +4,7 @@ declare const Resource: Readonly<{
             Bg: string;
         };
         Magic: string;
+        Mushimegane: string;
         BattleBgFores: string[];
         BattleBgMiddles: string[];
         BattleBgBacks: string[];
@@ -15,6 +16,7 @@ declare const Resource: Readonly<{
             SE: {
                 onCircle: string;
                 onCombine: string;
+                onClear: string;
             };
         };
     };

@@ -92,5 +92,20 @@ export default class Flag extends PIXI.Sprite {
     }
     //入っていなかったら
     this.scene.circle.removeFlag(this);
+
+    //虫眼鏡の上にあるか計算
+    const mushimeganeX = this.scene.mushimegane.x;
+    const mushimeganeY = this.scene.mushimegane.y;
+    const mushimeganeRadius =
+      Math.max(this.scene.mushimegane.width, this.scene.mushimegane.height) / 2;
+    if (
+      Math.pow(sprite.x - mushimeganeX, 2) +
+        Math.pow(sprite.y - mushimeganeY, 2) <=
+      Math.pow(mushimeganeRadius, 2)
+    ) {
+      //入っていたら
+      this.scene.onMushimegane(this);
+      return;
+    }
   }
 }

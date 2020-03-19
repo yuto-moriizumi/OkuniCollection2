@@ -41,20 +41,23 @@ export default class Circle extends PIXI.Sprite {
     ];
 
     if (!combine) return; //合成モードがONでないなら終了
+    this.judge();
+  }
 
-    const resources = GameManager.instance.game.loader.resources;
-    //BGMを再生
-    const sound = new Sound(
-      (resources[Resource.Static.Audio.SE.onCircle] as any).buffer
-    );
-    sound.volume = 0.25;
-    sound.play(false);
+  public removeFlag(flag: Flag) {
+    this.flags.delete(flag);
+    flag.filters = [];
+    flag.setParent(this.scene);
+    //this.judge();
+  }
 
+  private judge() {
     //合成判定
     let isCombined = false;
     GameManager.instance.countries.forEach(country => {
       //魔法陣内の旗とレシピが一致するか確認
       if (this.flags.size !== country.from.length) return;
+
       let isCombinable = true;
       this.flags.forEach(flag => {
         if (!country.from.includes(flag.country.id)) {
@@ -67,20 +70,32 @@ export default class Circle extends PIXI.Sprite {
         isCombined = true;
       }
     });
-    if (isCombined) {
-      //魔法陣にある旗を消去
-      this.flags.forEach(flag => {
-        this.flags.delete(flag);
-        flag.destroy();
-      });
-      //錬成リストにある旗を魔法陣に追加
-      for (const flag of this.combineList) {
-        this.addFlag(flag, false);
-        if (flag.country.id === 20) this.scene.onKingdomOfYugoslavia(); //ユーゴスラビア王国
-      }
-      this.combineList = [];
-      this.scene.createSidebar();
+    if (!isCombined) {
+      //合成が行われなかったらSEを再生して判定終了
+      this.playOnCircleSE();
+      return;
     }
+
+    //魔法陣にある旗を消去
+    this.flags.forEach(flag => {
+      this.flags.delete(flag);
+      flag.destroy();
+    });
+    //錬成リストにある旗を魔法陣に追加
+    for (const flag of this.combineList) {
+      this.addFlag(flag, false);
+      if (flag.country.id === 20) this.scene.onKingdomOfYugoslavia(); //ユーゴスラビア王国
+    }
+    this.combineList = [];
+    this.scene.createSidebar();
+
+    const resources = GameManager.instance.game.loader.resources;
+    //SEを再生
+    const sound = new Sound(
+      (resources[Resource.Static.Audio.SE.onCombine] as any).buffer
+    );
+    sound.volume = 0.25;
+    sound.play(false);
   }
 
   private combineCountry(country: Country) {
@@ -100,9 +115,13 @@ export default class Circle extends PIXI.Sprite {
     this.combineList.push(newCountry);
   }
 
-  public removeFlag(flag: Flag) {
-    this.flags.delete(flag);
-    flag.filters = [];
-    flag.setParent(this.scene);
+  private playOnCircleSE() {
+    const resources = GameManager.instance.game.loader.resources;
+    //SEを再生
+    const sound = new Sound(
+      (resources[Resource.Static.Audio.SE.onCircle] as any).buffer
+    );
+    sound.volume = 0.25;
+    sound.play(false);
   }
 }

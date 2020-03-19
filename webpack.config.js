@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = (env, argv) => {
   return {
-    mode: "development",
+    mode: "production",
     entry: {
       index: path.join(__dirname, "src", "index.ts")
     },

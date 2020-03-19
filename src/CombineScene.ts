@@ -13,8 +13,13 @@ export default class CombineScene extends Scene {
   private sound: Sound | null = null;
   public sidebar: PIXI.Graphics;
   public circle: Circle;
+  public mushimegane: PIXI.Sprite;
   private sidebarFlags = new Array<Country>();
   private progressText: PIXI.Text;
+  private sidebarRows = 1;
+  private readonly MAX_LINES = 13;
+  private readonly SIDEBAR_WIDTH_RATIO = 0.25;
+  private readonly FLAG_MARGIN_RATIO = 0.1;
 
   private get flagMargin(): number {
     return Flag.maxHeight * 0.1;
@@ -41,10 +46,7 @@ export default class CombineScene extends Scene {
       })
     );
     this.progressText.anchor.set(0.5, 0.5);
-    this.progressText.position.set(
-      renderer.width * 0.65,
-      renderer.height * 0.9
-    );
+    this.progressText.position.set(renderer.width * 0.6, renderer.height * 0.9);
     this.addChild(this.progressText);
   }
 
@@ -56,6 +58,8 @@ export default class CombineScene extends Scene {
     assets.push(staticResource.Audio.Bgm.CombineScene);
     assets.push(staticResource.Audio.SE.onCircle);
     assets.push(staticResource.Audio.SE.onCombine);
+    assets.push(staticResource.Audio.SE.onClear);
+    assets.push(staticResource.Mushimegane);
     GameManager.instance.countries.forEach((country: Country) =>
       assets.push(country.img)
     );
@@ -71,7 +75,18 @@ export default class CombineScene extends Scene {
     this.circle = new Circle(this, resources[Resource.Static.Magic].texture);
     this.addChild(this.circle);
 
-    //サイドバーに国旗を表示
+    //虫眼鏡を表示
+    this.mushimegane = new PIXI.Sprite(
+      resources[Resource.Static.Mushimegane].texture
+    );
+
+    const renderer = GameManager.instance.game.renderer;
+    this.mushimegane.position.set(renderer.width * 0.6, renderer.height * 0.15);
+    this.mushimegane.anchor.set(0.5, 0.5);
+    this.mushimegane.scale.set(100 / this.mushimegane.width);
+    this.addChild(this.mushimegane);
+
+    //サイドバーを生成
     this.createSidebar();
   }
 
@@ -84,7 +99,7 @@ export default class CombineScene extends Scene {
 
     //背景色を設定
     this.sidebar = new PIXI.Graphics();
-    this.sidebar.x = renderer.width * 0.8;
+    this.sidebar.x = renderer.width * (1 - this.SIDEBAR_WIDTH_RATIO);
     const sidebarWidth = renderer.width - this.sidebar.x;
     this.sidebar.beginFill(0x7fff7f);
     this.sidebar.drawRect(0, 0, sidebarWidth, renderer.height);
@@ -98,10 +113,41 @@ export default class CombineScene extends Scene {
       this.sidebarFlags.push(country);
     });
 
+    //列数を決定
+    this.sidebarRows = Math.ceil(this.sidebarFlags.length / this.MAX_LINES);
+
+    //クリア判定
+    if (this.sidebarFlags.length === GameManager.instance.countries.size) {
+      const resources = GameManager.instance.game.loader.resources;
+      //SEを再生
+      const sound = new Sound(
+        (resources[Resource.Static.Audio.SE.onClear] as any).buffer
+      );
+      sound.volume = 0.3;
+      sound.play(false);
+
+      const text = new PIXI.Text(
+        "ゲームクリア！",
+        new PIXI.TextStyle({
+          fontFamily: "MisakiGothic",
+          fontSize: 128,
+          fill: 0x000000,
+          padding: 6
+        })
+      );
+      text.anchor.set(0.5, 0.5);
+      const renderer = GameManager.instance.game.renderer;
+      text.position.set(renderer.width / 2, renderer.height / 2);
+      this.addChild(text);
+    }
+
     //旗の縦幅を決定
     Flag.maxHeight = Math.min(
       100,
-      (this.sidebar.height / this.sidebarFlags.length) * 0.9 + 0.1
+      (this.sidebar.height /
+        Math.min(this.sidebarFlags.length, this.MAX_LINES)) *
+        (1 - this.FLAG_MARGIN_RATIO) +
+        this.FLAG_MARGIN_RATIO
     );
 
     //所持数更新
@@ -116,8 +162,11 @@ export default class CombineScene extends Scene {
       flag.scene = this;
       flag.setDraggable(true, country.id);
       flag.setOriginalPos(
-        this.sidebar.width / 2,
-        i * Flag.maxHeight + (i + 1) * this.flagMargin + Flag.maxHeight * 0.5
+        (this.sidebar.width / (this.sidebarRows + 1)) *
+          (Math.floor(i / this.MAX_LINES) + 1),
+        (i % this.MAX_LINES) * (Flag.maxHeight + this.flagMargin) +
+          this.flagMargin +
+          Flag.maxHeight * 0.5
       );
       this.sidebar.addChild(flag);
       i++;
@@ -136,5 +185,11 @@ export default class CombineScene extends Scene {
   }
   public update(dt: number) {
     super.update(dt);
+  }
+
+  public onMushimegane(flag: Flag) {
+    if (flag.country.id === -1) return; //ハンマーの場合は何もしない
+    console.log(flag.country.wikipedia);
+    window.open(flag.country.wikipedia);
   }
 }

@@ -6,6 +6,7 @@ const Resource = Object.freeze({
       Bg: "sekaichizu.png"
     },
     Magic: "mahoujin1.png",
+    Mushimegane: "bunbougu_mushimegane.png",
     BattleBgFores: ["chang.png"],
     BattleBgMiddles: ["sun.png"],
     BattleBgBacks: ["wang.png"],
@@ -16,7 +17,8 @@ const Resource = Object.freeze({
       },
       SE: {
         onCircle: "se_maoudamashii_system36.mp3",
-        onCombine: "se_maoudamashii_onepoint23.mp3"
+        onCombine: "se_maoudamashii_onepoint23.mp3",
+        onClear: "se_maoudamashii_jingle06.mp3"
       }
     }
   },

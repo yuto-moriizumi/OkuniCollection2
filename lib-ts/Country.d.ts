@@ -4,5 +4,6 @@ export default class Country {
     img: string;
     isOwn: boolean;
     from: Array<number>;
+    wikipedia: string;
     constructor(id: number, arg: any);
 }
