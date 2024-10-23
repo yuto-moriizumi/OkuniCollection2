@@ -1,5 +1,12 @@
 import GameManager from "./GameManager";
-import { BrowserInfo, BotInfo, NodeInfo, detect } from "detect-browser";
+import {
+  BrowserInfo,
+  BotInfo,
+  NodeInfo,
+  detect,
+  SearchBotDeviceInfo,
+  ReactNativeInfo,
+} from "detect-browser";
 import * as PIXI from "pixi.js";
 
 export default class SoundManager {
@@ -28,13 +35,13 @@ export default class SoundManager {
     }
 
     const browser = detect();
-    if (!browser) return;
+    if (!browser || browser instanceof SearchBotDeviceInfo) return;
     SoundManager.setSoundInitializeEvent(browser);
     SoundManager.useWebaudio(browser);
   }
   //サウンドを初期化するためのイベントを登録する
   public static setSoundInitializeEvent(
-    browser: BrowserInfo | BotInfo | NodeInfo
+    browser: BrowserInfo | BotInfo | NodeInfo | ReactNativeInfo
   ): void {
     const eventName =
       document.ontouchend === undefined ? "mousedown" : "touchend";
@@ -67,7 +74,9 @@ export default class SoundManager {
   }
   //オーディオデータをパースするためのPIXI.Loaderミドルウェアを登録する
   //サウンドをDOMではなくWebAudioとして制御するため
-  public static useWebaudio(browser: BrowserInfo | BotInfo | NodeInfo): void {
+  public static useWebaudio(
+    browser: BrowserInfo | BotInfo | NodeInfo | ReactNativeInfo
+  ): void {
     if (SoundManager.webAudioInitialized) return;
     const supportedExtensions = SoundManager.supportedExtensions;
     for (const extension of supportedExtensions) {
