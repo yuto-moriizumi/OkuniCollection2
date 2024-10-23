@@ -42,8 +42,8 @@ export default class CombineScene extends Scene {
       new PIXI.TextStyle({
         fontSize: 96,
         fill: 0x000000,
-        padding: 6
-      })
+        padding: 6,
+      }),
     );
     this.progressText.anchor.set(0.5, 0.5);
     this.progressText.position.set(renderer.width * 0.6, renderer.height * 0.9);
@@ -52,7 +52,7 @@ export default class CombineScene extends Scene {
 
   //リソースリストを作成し返却する
   protected createInitialResourceList(): (LoaderAddParam | string)[] {
-    let assets = super.createInitialResourceList();
+    const assets = super.createInitialResourceList();
     const staticResource = Resource.Static;
     assets.push(staticResource.Magic);
     assets.push(staticResource.Audio.Bgm.CombineScene);
@@ -61,7 +61,7 @@ export default class CombineScene extends Scene {
     assets.push(staticResource.Audio.SE.onClear);
     assets.push(staticResource.Mushimegane);
     GameManager.instance.countries.forEach((country: Country) =>
-      assets.push(country.img)
+      assets.push(country.img),
     );
     return assets;
   }
@@ -77,7 +77,7 @@ export default class CombineScene extends Scene {
 
     //虫眼鏡を表示
     this.mushimegane = new PIXI.Sprite(
-      resources[Resource.Static.Mushimegane].texture
+      resources[Resource.Static.Mushimegane].texture,
     );
 
     const renderer = GameManager.instance.game.renderer;
@@ -108,7 +108,7 @@ export default class CombineScene extends Scene {
     //旗を追加
     const resources = GameManager.instance.game.loader.resources;
     this.sidebarFlags = [];
-    GameManager.instance.countries.forEach(country => {
+    GameManager.instance.countries.forEach((country) => {
       if (!country.isOwn) return;
       this.sidebarFlags.push(country);
     });
@@ -121,7 +121,7 @@ export default class CombineScene extends Scene {
       const resources = GameManager.instance.game.loader.resources;
       //SEを再生
       const sound = new Sound(
-        (resources[Resource.Static.Audio.SE.onClear] as any).buffer
+        resources[Resource.Static.Audio.SE.onClear]["buffer"],
       );
       sound.volume = 0.3;
       sound.play(false);
@@ -132,8 +132,8 @@ export default class CombineScene extends Scene {
           fontFamily: "MisakiGothic",
           fontSize: 128,
           fill: 0x000000,
-          padding: 6
-        })
+          padding: 6,
+        }),
       );
       text.anchor.set(0.5, 0.5);
       const renderer = GameManager.instance.game.renderer;
@@ -147,7 +147,7 @@ export default class CombineScene extends Scene {
       (this.sidebar.height /
         Math.min(this.sidebarFlags.length, this.MAX_LINES)) *
         (1 - this.FLAG_MARGIN_RATIO) +
-        this.FLAG_MARGIN_RATIO
+        this.FLAG_MARGIN_RATIO,
     );
 
     //所持数更新
@@ -166,7 +166,7 @@ export default class CombineScene extends Scene {
           (Math.floor(i / this.MAX_LINES) + 1),
         (i % this.MAX_LINES) * (Flag.maxHeight + this.flagMargin) +
           this.flagMargin +
-          Flag.maxHeight * 0.5
+          Flag.maxHeight * 0.5,
       );
       this.sidebar.addChild(flag);
       i++;
@@ -178,7 +178,7 @@ export default class CombineScene extends Scene {
     const resources = GameManager.instance.game.loader.resources;
     //BGMを再生
     this.sound = new Sound(
-      (resources[Resource.Static.Audio.Bgm.CombineScene] as any).buffer
+      resources[Resource.Static.Audio.Bgm.CombineScene]["buffer"],
     );
     this.sound.volume = 0.25;
     this.sound.play(false);

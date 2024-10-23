@@ -29,9 +29,7 @@ export default class SoundManager {
     SoundManager.instance = new SoundManager();
     if (ctx) SoundManager.context = ctx;
     else {
-      const AudioContextClass =
-        (window as any).AudioContext || (window as any).webkitAudioContext;
-      SoundManager.context = new AudioContextClass();
+      SoundManager.context = new window.AudioContext();
     }
 
     const browser = detect();
@@ -41,7 +39,7 @@ export default class SoundManager {
   }
   //サウンドを初期化するためのイベントを登録する
   public static setSoundInitializeEvent(
-    browser: BrowserInfo | BotInfo | NodeInfo | ReactNativeInfo
+    browser: BrowserInfo | BotInfo | NodeInfo | ReactNativeInfo,
   ): void {
     const eventName =
       document.ontouchend === undefined ? "mousedown" : "touchend";
@@ -61,7 +59,7 @@ export default class SoundManager {
           slientSource.buffer = SoundManager.sharedContext.createBuffer(
             1,
             1,
-            44100
+            44100,
           );
           slientSource.connect(SoundManager.sharedContext.destination);
           slientSource.start();
@@ -75,7 +73,7 @@ export default class SoundManager {
   //オーディオデータをパースするためのPIXI.Loaderミドルウェアを登録する
   //サウンドをDOMではなくWebAudioとして制御するため
   public static useWebaudio(
-    browser: BrowserInfo | BotInfo | NodeInfo | ReactNativeInfo
+    browser: BrowserInfo | BotInfo | NodeInfo | ReactNativeInfo,
   ): void {
     if (SoundManager.webAudioInitialized) return;
     const supportedExtensions = SoundManager.supportedExtensions;
@@ -83,7 +81,7 @@ export default class SoundManager {
       const PixiResource = PIXI.LoaderResource;
       PixiResource.setExtensionXhrType(
         extension,
-        PixiResource.XHR_RESPONSE_TYPE.BUFFER
+        PixiResource.XHR_RESPONSE_TYPE.BUFFER,
       );
       PixiResource.setExtensionLoadType(extension, PixiResource.LOAD_TYPE.XHR);
     }
@@ -95,11 +93,11 @@ export default class SoundManager {
     if (browser.name === "chrome" && Number.parseInt(majorVersion, 10) >= 64)
       methodName = "decodeAudioWithPromise";
     //resource-loaderミドルウェアの登録
-    GameManager.instance.game.loader.use((resource: any, next: Function) => {
+    GameManager.instance.game.loader.use((resource, next) => {
       const extension = resource.url.split("?")[0].split(".")[1];
       if (extension && supportedExtensions.indexOf(extension) !== -1) {
         //リソースにbufferという名前でプロパティを増やす
-        (SoundManager as any)[methodName](resource.data, (buf: AudioBuffer) => {
+        SoundManager[methodName](resource.data, (buf: AudioBuffer) => {
           resource.buffer = buf;
           next();
         });
@@ -109,8 +107,8 @@ export default class SoundManager {
 
   //オーディオデータのデコード処理
   public static decodeAudio(
-    binary: any,
-    callback: (buf: AudioBuffer) => void
+    binary,
+    callback: (buf: AudioBuffer) => void,
   ): void {
     if (SoundManager.sharedContext)
       SoundManager.sharedContext.decodeAudioData(binary, callback);
@@ -119,8 +117,8 @@ export default class SoundManager {
   //オーディオデータのデコード処理
   //特定のブラウザやバージョンによってはこちらを用いる
   public static decodeAudioWithPromise(
-    binary: any,
-    callback: (buf: AudioBuffer) => void
+    binary,
+    callback: (buf: AudioBuffer) => void,
   ): void {
     if (SoundManager.sharedContext)
       SoundManager.sharedContext.decodeAudioData(binary).then(callback);

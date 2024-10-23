@@ -12,7 +12,7 @@ jobs:
         run: npm ci
       - name: Typecheck
         run: npm run typecheck
+      - name: Check lint
+        run: npm run lint
       - name: Build
         run: npm run build
-      # - name: Check lint
-      #   run: npm run lint

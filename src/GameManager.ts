@@ -26,7 +26,7 @@ export default class GameManager {
     const game = new PIXI.Application({
       width: params.glWidth,
       height: params.glHeight,
-      backgroundColor: params.backgroundColor
+      backgroundColor: params.backgroundColor,
     });
     //PIXI.ApplicationインスタンスのloaderプロパティにbaseUrlを設定
     game.loader.baseUrl = "assets/";
@@ -47,12 +47,10 @@ export default class GameManager {
       //console.log("json loaded");
       const json = JSON.parse(req.responseText);
       for (const key in json) {
-        if (json.hasOwnProperty(key)) {
-          const country = json[key];
-          console.log([key, country]);
-          const id = parseInt(key);
-          this.instance.countries.set(id, new Country(id, country));
-        }
+        const country = json[key];
+        console.log([key, country]);
+        const id = parseInt(key);
+        this.instance.countries.set(id, new Country(id, country));
       }
       //console.log(GameManager.instance.countries);
     });
@@ -73,7 +71,7 @@ export default class GameManager {
     if (instance.game) {
       instance.game.stage.addChild(newScene);
     }
-    newScene.beginTransitionIn((_: Scene) => {});
+    newScene.beginTransitionIn(() => {});
     return true;
   }
 
@@ -90,7 +88,7 @@ export default class GameManager {
         instance.sceneResourceLoaded = true;
         GameManager.transitionInIfPossible(newScene);
       });
-      instance.currentScene.beginTransitionOut((_: Scene) => {
+      instance.currentScene.beginTransitionOut(() => {
         instance.sceneTransitionOutFinished = true;
         GameManager.transitionInIfPossible(newScene);
       });

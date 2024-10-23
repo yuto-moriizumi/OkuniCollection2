@@ -73,11 +73,10 @@ export default class Fade implements Transition {
   /**
    * トランジションを更新する
    * このトランジションは即時終了するため何も行わない
-   * @param {number} _dt
    * @returns {void}
    * @memberof Fade
    */
-  public update(_dt: number): void {
+  public update(): void {
     if (!this.isBegan()) return;
     if (this.isFinished()) return;
     if (

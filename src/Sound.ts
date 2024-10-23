@@ -45,8 +45,10 @@ export default class Sound {
     if (!this.source || !this.played) return;
     this.source.disconnect();
     try {
-      (this.source as any).buffer = null;
-    } catch (_e) {}
+      this.source.buffer = null;
+    } catch {
+      // do nothing
+    }
     this.source.onended = null;
     this.source = null; //SourceNodeは一度再生したら再利用できないので破棄
     this.paused = false;
