@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "dev": "webpack-dev-server"
+    "build": "NODE_OPTIONS='--openssl-legacy-provider' webpack",
+    "dev": "NODE_OPTIONS='--openssl-legacy-provider' webpack-dev-server",
+    "typecheck": "tsc --noEmit",
+    "lint": "tslint --project tsconfig.json"
   },
   "author": "",
   "license": "ISC",
