@@ -1,6 +1,4 @@
 import * as PIXI from "pixi.js";
-import GameManager from "./GameManager";
-import * as Filters from "pixi-filters";
 import CombineScene from "./CombineScene";
 import Country from "./Country";
 
@@ -33,7 +31,7 @@ export default class Flag extends PIXI.Sprite {
       this.buttonMode = true;
       this.interactive = true;
       this.on("mousedown", (e: PIXI.InteractionEvent) =>
-        this.onFlagClicked(e, id)
+        this.onFlagClicked(e, id),
       );
     }
   }
@@ -65,7 +63,7 @@ export default class Flag extends PIXI.Sprite {
     sprite.off("mousemove");
     sprite.off("mouseup");
     sprite.on("mousedown", (e: PIXI.InteractionEvent) =>
-      this.onFlagClicked(e, id)
+      this.onFlagClicked(e, id),
     );
 
     //魔法陣の中に入ったか計算
@@ -82,7 +80,7 @@ export default class Flag extends PIXI.Sprite {
       this.scene.circle.addFlag(
         this,
         true,
-        e.data.getLocalPosition(this.scene.circle)
+        e.data.getLocalPosition(this.scene.circle),
       );
       return;
     }

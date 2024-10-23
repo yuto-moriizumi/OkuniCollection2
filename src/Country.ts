@@ -5,7 +5,7 @@ export default class Country {
   public isOwn: boolean;
   public from: Array<number>;
   public wikipedia: string;
-  constructor(id: number, arg: any) {
+  constructor(id: number, arg) {
     this.id = id;
     this.name = arg.name;
     this.img = arg.img;

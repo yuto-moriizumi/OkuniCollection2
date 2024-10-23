@@ -36,8 +36,8 @@ export default class Circle extends PIXI.Sprite {
       new Filters.GlowFilter({
         distance: 15,
         outerStrength: 8,
-        color: 0xffff00
-      })
+        color: 0xffff00,
+      }),
     ];
 
     if (!combine) return; //合成モードがONでないなら終了
@@ -54,12 +54,12 @@ export default class Circle extends PIXI.Sprite {
   private judge() {
     //合成判定
     let isCombined = false;
-    GameManager.instance.countries.forEach(country => {
+    GameManager.instance.countries.forEach((country) => {
       //魔法陣内の旗とレシピが一致するか確認
       if (this.flags.size !== country.from.length) return;
 
       let isCombinable = true;
-      this.flags.forEach(flag => {
+      this.flags.forEach((flag) => {
         if (!country.from.includes(flag.country.id)) {
           isCombinable = false;
           return;
@@ -77,7 +77,7 @@ export default class Circle extends PIXI.Sprite {
     }
 
     //魔法陣にある旗を消去
-    this.flags.forEach(flag => {
+    this.flags.forEach((flag) => {
       this.flags.delete(flag);
       flag.destroy();
     });
@@ -92,7 +92,7 @@ export default class Circle extends PIXI.Sprite {
     const resources = GameManager.instance.game.loader.resources;
     //SEを再生
     const sound = new Sound(
-      (resources[Resource.Static.Audio.SE.onCombine] as any).buffer
+      resources[Resource.Static.Audio.SE.onCombine]["buffer"],
     );
     sound.volume = 0.25;
     sound.play(false);
@@ -107,7 +107,7 @@ export default class Circle extends PIXI.Sprite {
     const raidus = Math.max(this.width, this.height);
     newCountry.position.set(
       (Math.random() - 0.5) * raidus * 0.9,
-      (Math.random() - 0.5) * raidus * 0.9
+      (Math.random() - 0.5) * raidus * 0.9,
     );
     newCountry.setDraggable(true, country.id);
     newCountry.scene = this.scene;
@@ -119,7 +119,7 @@ export default class Circle extends PIXI.Sprite {
     const resources = GameManager.instance.game.loader.resources;
     //SEを再生
     const sound = new Sound(
-      (resources[Resource.Static.Audio.SE.onCircle] as any).buffer
+      resources[Resource.Static.Audio.SE.onCircle]["buffer"],
     );
     sound.volume = 0.25;
     sound.play(false);

@@ -50,11 +50,10 @@ export default class Immediate implements Transition {
   /**
    * トランジションを更新する
    * このトランジションは即時終了するため何も行わない
-   * @param {number} _dt
    * @returns {void}
    * @memberof Immediate
    */
-  public update(_dt: number): void {
+  public update(): void {
     return;
   }
 

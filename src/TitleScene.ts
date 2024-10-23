@@ -18,7 +18,7 @@ export default class TitleScene extends Scene {
 
   //リソースリストを作成し返却する
   protected createInitialResourceList(): (LoaderAddParam | string)[] {
-    let assets = super.createInitialResourceList();
+    const assets = super.createInitialResourceList();
     const staticResource = Resource.Static;
     assets.push(staticResource.Audio.Bgm.Title);
     assets.push(staticResource.Title.Bg);
@@ -45,8 +45,8 @@ export default class TitleScene extends Scene {
         fontSize: 110,
         fill: 0xffffff,
         padding: 12,
-        dropShadow: true
-      })
+        dropShadow: true,
+      }),
     );
     text.anchor.set(0.5, 0.5);
     text.position.set(renderer.width * 0.5, renderer.height * 0.4);
@@ -58,8 +58,8 @@ export default class TitleScene extends Scene {
         fontFamily: "MisakiGothic",
         fontSize: 64,
         fill: 0xffffff,
-        padding: 12
-      })
+        padding: 12,
+      }),
     );
     this.text.anchor.set(0.5, 0.5);
     this.text.position.set(renderer.width * 0.5, renderer.height * 0.6);
