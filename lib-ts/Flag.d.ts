@@ -11,7 +11,7 @@ export default class Flag extends PIXI.Sprite {
     setScale(): void;
     setOriginalPos(x: number, y: number): void;
     setDraggable(boolean: boolean, id: number): void;
-    onFlagClicked(e: PIXI.interaction.InteractionEvent, id: number): void;
+    onFlagClicked(e: PIXI.InteractionEvent, id: number): void;
     private onFlagMove;
     private onFlagUp;
 }
