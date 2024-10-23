@@ -25,7 +25,12 @@ module.exports = (env, argv) => {
       modules: ["node_modules"],
     },
     devServer: {
-      contentBase: path.join(__dirname, "www"),
+      static: path.join(__dirname, "www"),
+      client: {
+        overlay: {
+          warnings: false,
+        },
+      },
     },
   };
 };
