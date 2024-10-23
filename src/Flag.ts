@@ -32,13 +32,13 @@ export default class Flag extends PIXI.Sprite {
     if (boolean) {
       this.buttonMode = true;
       this.interactive = true;
-      this.on("mousedown", (e: PIXI.interaction.InteractionEvent) =>
+      this.on("mousedown", (e: PIXI.InteractionEvent) =>
         this.onFlagClicked(e, id)
       );
     }
   }
 
-  public onFlagClicked(e: PIXI.interaction.InteractionEvent, id: number) {
+  public onFlagClicked(e: PIXI.InteractionEvent, id: number) {
     const sprite = e.currentTarget as PIXI.Sprite;
     sprite.off("mousedown");
     const localPosition = e.data.getLocalPosition(sprite);
@@ -49,26 +49,22 @@ export default class Flag extends PIXI.Sprite {
     this.flagFirstX = localPosition.x * sprite.scale.x;
     this.flagFirstY = localPosition.y * sprite.scale.y;
     //console.log(["moveto", sprite.x, sprite.y]);
-    sprite.on("mousemove", (e: PIXI.interaction.InteractionEvent) =>
-      this.onFlagMove(e)
-    );
-    sprite.on("mouseup", (e: PIXI.interaction.InteractionEvent) =>
-      this.onFlagUp(e, id)
-    );
+    sprite.on("mousemove", (e: PIXI.InteractionEvent) => this.onFlagMove(e));
+    sprite.on("mouseup", (e: PIXI.InteractionEvent) => this.onFlagUp(e, id));
   }
 
-  private onFlagMove(e: PIXI.interaction.InteractionEvent) {
+  private onFlagMove(e: PIXI.InteractionEvent) {
     const sprite = e.currentTarget as PIXI.Sprite;
     const position = e.data.getLocalPosition(this.scene);
     sprite.x = position.x - this.flagFirstX;
     sprite.y = position.y - this.flagFirstY;
   }
 
-  private onFlagUp(e: PIXI.interaction.InteractionEvent, id: number) {
+  private onFlagUp(e: PIXI.InteractionEvent, id: number) {
     const sprite = e.currentTarget as PIXI.Sprite;
     sprite.off("mousemove");
     sprite.off("mouseup");
-    sprite.on("mousedown", (e: PIXI.interaction.InteractionEvent) =>
+    sprite.on("mousedown", (e: PIXI.InteractionEvent) =>
       this.onFlagClicked(e, id)
     );
 

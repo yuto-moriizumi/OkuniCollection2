@@ -73,11 +73,11 @@ export default abstract class Scene extends PIXI.Container {
 
   public beginLoadResource(onLoaded: () => void): Promise<void> {
     //リソースダウンロードのフローを実行する
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       this.loadInitialResource(() => resolve());
     })
       .then(() => {
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
           const additionalAssets = this.onInitialResourceLoaded();
           this.loadAdditionalResource(additionalAssets, () => resolve());
         });
