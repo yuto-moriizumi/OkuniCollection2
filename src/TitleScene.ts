@@ -2,9 +2,9 @@ import * as PIXI from "pixi.js";
 import Scene from "./Scene";
 import Fade from "./Fade";
 import GameManager from "./GameManager";
-import LoaderAddParam from "./LoaderAddParam";
 import Resource from "./Resources";
 import CombineScene from "./CombineScene";
+import { Assets } from "pixi.js";
 
 export default class TitleScene extends Scene {
   private text!: PIXI.Text;
@@ -17,7 +17,7 @@ export default class TitleScene extends Scene {
   }
 
   //リソースリストを作成し返却する
-  protected createInitialResourceList(): (LoaderAddParam | string)[] {
+  protected createInitialResourceList(): string[] {
     const assets = super.createInitialResourceList();
     const staticResource = Resource.Static;
     assets.push(staticResource.Audio.Bgm.Title);
@@ -27,13 +27,12 @@ export default class TitleScene extends Scene {
   }
 
   //リソースがロードされたときのコールバック
-  protected onResourceLoaded(): void {
+  public onResourceLoaded(): void {
     super.onResourceLoaded();
-    const resources = GameManager.instance.game.loader.resources;
     const renderer = GameManager.instance.game.renderer;
 
     //背景
-    const sprite = new PIXI.Sprite(resources[Resource.Static.Title.Bg].texture);
+    const sprite = new PIXI.Sprite(Assets.get(Resource.Static.Title.Bg));
     sprite.width = renderer.width;
     sprite.height = renderer.height;
     this.addChild(sprite);
@@ -65,7 +64,7 @@ export default class TitleScene extends Scene {
     this.text.position.set(renderer.width * 0.5, renderer.height * 0.6);
     this.addChild(this.text);
     this.interactive = true;
-    this.buttonMode = true;
+    this.cursor = "pointer";
     this.on("pointerdown", () => this.onPointerDown());
   }
 

@@ -30,7 +30,7 @@ export default class Flag extends Sprite {
 
   public setDraggable(boolean: boolean, id: number) {
     if (boolean) {
-      this.buttonMode = true;
+      this.cursor = "pointer";
       this.interactive = true;
       this.on("mousedown", (e) => this.onFlagClicked(e, id));
     }

@@ -2,10 +2,9 @@ import UpdateObject from "./UpdateObject";
 import * as PIXI from "pixi.js";
 import Transition from "./Transition";
 import Immediate from "./Immediate";
-import LoaderAddParam from "./LoaderAddParam";
-import GameManager from "./GameManager";
+import { Assets, Container } from "pixi.js";
 
-export default abstract class Scene extends PIXI.Container {
+export default class Scene extends Container {
   protected transitionIn: Transition = new Immediate();
   protected transitionOut: Transition = new Immediate();
   protected objectsToUpdate: UpdateObject[] = [];
@@ -45,7 +44,7 @@ export default abstract class Scene extends PIXI.Container {
   }
   //シーン終了トランジション（引数は終了時コールバック
   public beginTransitionOut(
-    onTransitionFinished: (scene: Scene) => void
+    onTransitionFinished: (scene: Scene) => void,
   ): void {
     this.transitionOut.setCallback(() => {
       onTransitionFinished(this);
@@ -66,78 +65,38 @@ export default abstract class Scene extends PIXI.Container {
   }
 
   //UI Graph意外に利用するリソースがある場合に派生クラスで実装する
-  protected createInitialResourceList(): (LoaderAddParam | string)[] {
+  protected createInitialResourceList(): string[] {
     //リソースリスト取得
     return [];
   }
 
-  public beginLoadResource(onLoaded: () => void): Promise<void> {
-    //リソースダウンロードのフローを実行する
-    return new Promise<void>(resolve => {
-      this.loadInitialResource(() => resolve());
-    })
-      .then(() => {
-        return new Promise<void>(resolve => {
-          const additionalAssets = this.onInitialResourceLoaded();
-          this.loadAdditionalResource(additionalAssets, () => resolve());
-        });
-      })
-      .then(() => {
-        this.onAdditionalResourceLoaded();
-        onLoaded();
-        this.onResourceLoaded();
-      });
+  public async beginLoadResource() {
+    await this.loadInitialResource();
+    return Assets.load(this.createInitialResourceList());
   }
 
   //最初に、UIGraph情報とcreateInitialResourceListで指定されたリソースをダウンロードする
-  protected loadInitialResource(onLoaded: () => void): void {
+  protected async loadInitialResource() {
     const assets = this.createInitialResourceList();
-    GameManager.instance.game.loader
-      .add(this.filterLoadedAssets(assets))
-      .load(() => onLoaded());
+    return Assets.load(assets);
   }
 
-  //渡されたアセットのリストから、ロード済みのものをフィルタリングする
-  private filterLoadedAssets(
-    assets: (LoaderAddParam | string)[]
-  ): LoaderAddParam[] {
-    const assetMap = new Map<string, LoaderAddParam>();
-    const loader = GameManager.instance.game.loader;
-    for (const asset of assets) {
-      if (typeof asset === "string") {
-        if (!loader.resources[asset] && !assetMap.has(asset)) {
-          assetMap.set(asset, { name: asset, url: asset });
-        }
-      } else {
-        if (!loader.resources[asset.name] && !assetMap.has(asset.name)) {
-          assetMap.set(asset.name, asset);
-        }
-      }
-    }
-    return Array.from(assetMap.values());
-  }
-
-  //loadInitialResource完了時のコールバックメソッド
-  //追加でロードしなければならないてくすちゃなどの情報を返す
-  protected onInitialResourceLoaded(): string[] | LoaderAddParam[] {
-    return [];
-  }
-
-  //onInitialResourceLoadedで発生した追加のリソースをロードする
+  /**
+   * onInitialResourceLoadedで発生した追加のリソースをロードする
+   * @deprecated PIXI.Assetsを使用すること
+   */
   protected loadAdditionalResource(
-    assets: string[] | LoaderAddParam[],
-    onLoaded: () => void
+    assets: string[],
+    onLoaded: () => void,
   ): void {
-    GameManager.instance.game.loader
-      .add(this.filterLoadedAssets(assets))
-      .load(() => onLoaded());
+    Assets.load(assets).then(onLoaded);
   }
 
   //追加のリソースロード完了時のコールバック 何もしない
   protected onAdditionalResourceLoaded(): void {}
 
   //すべてのリソースロード処理完了時のコールバック
-  protected onResourceLoaded(): void {
+  public onResourceLoaded(): void {
     this.addChild(this.uiGraphContainer);
   }
 }

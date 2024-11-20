@@ -1,8 +1,7 @@
 const path = require("path");
 
-module.exports = (env, argv) => {
-  return {
-    mode: "production",
+module.exports = (env, argv) =>
+  /** @type {import("webpack").Configuration} */ ({
     entry: {
       index: path.join(__dirname, "src", "index.ts"),
     },
@@ -12,6 +11,7 @@ module.exports = (env, argv) => {
       library: "PixiGame",
       libraryTarget: "umd",
     },
+    devtool: argv.mode === "development" && "source-map",
     module: {
       rules: [
         {
@@ -32,5 +32,4 @@ module.exports = (env, argv) => {
         },
       },
     },
-  };
-};
+  });

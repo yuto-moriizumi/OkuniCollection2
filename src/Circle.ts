@@ -4,8 +4,10 @@ import Flag from "./Flag";
 import * as Filters from "pixi-filters";
 import Country from "./Country";
 import CombineScene from "./CombineScene";
-import Sound from "./Sound";
+// import Sound from "./Sound";
 import Resource from "./Resources";
+import { Assets } from "pixi.js";
+import { Sound } from "@pixi/sound";
 
 export default class Circle extends PIXI.Sprite {
   private flags: Set<Flag> = new Set<Flag>();
@@ -89,20 +91,19 @@ export default class Circle extends PIXI.Sprite {
     this.combineList = [];
     this.scene.createSidebar();
 
-    const resources = GameManager.instance.game.loader.resources;
     //SEを再生
-    const sound = new Sound(
-      resources[Resource.Static.Audio.SE.onCombine]["buffer"],
+    const sound = Sound.from(
+      Assets.resolver.resolveUrl(Resource.Static.Audio.SE.onCombine),
     );
-    sound.volume = 0.25;
-    sound.play(false);
+    sound.play({
+      volume: 0.25,
+    });
   }
 
   private combineCountry(country: Country) {
     console.log(["combine:", country.name]);
     //合成する
-    const resources = GameManager.instance.game.loader.resources;
-    const newCountry = new Flag(country, resources[country.img].texture);
+    const newCountry = new Flag(country, Assets.get(country.img));
     newCountry.anchor.set(0.5, 0.5);
     const raidus = Math.max(this.width, this.height);
     newCountry.position.set(
@@ -116,12 +117,9 @@ export default class Circle extends PIXI.Sprite {
   }
 
   private playOnCircleSE() {
-    const resources = GameManager.instance.game.loader.resources;
-    //SEを再生
-    const sound = new Sound(
-      resources[Resource.Static.Audio.SE.onCircle]["buffer"],
+    const sound = Sound.from(
+      Assets.resolver.resolveUrl(Resource.Static.Audio.SE.onCircle),
     );
-    sound.volume = 0.25;
-    sound.play(false);
+    sound.play({ volume: 0.25 });
   }
 }
