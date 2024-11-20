@@ -4,7 +4,6 @@ import Flag from "./Flag";
 import * as Filters from "pixi-filters";
 import Country from "./Country";
 import CombineScene from "./CombineScene";
-// import Sound from "./Sound";
 import Resource from "./Resources";
 import { Assets } from "pixi.js";
 import { Sound } from "@pixi/sound";
@@ -28,7 +27,7 @@ export default class Circle extends PIXI.Sprite {
 
   public addFlag(flag: Flag, combine: boolean = true, position?: PIXI.Point) {
     if (this.flags.has(flag)) return;
-    flag.setParent(this);
+    this.addChild(flag);
     this.flags.add(flag);
     if (position) {
       flag.x = position.x - flag.flagFirstX;
@@ -49,7 +48,7 @@ export default class Circle extends PIXI.Sprite {
   public removeFlag(flag: Flag) {
     this.flags.delete(flag);
     flag.filters = [];
-    flag.setParent(this.scene);
+    this.scene.addChild(flag);
     //this.judge();
   }
 

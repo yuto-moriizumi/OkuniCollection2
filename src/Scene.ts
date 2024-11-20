@@ -55,12 +55,12 @@ export default class Scene extends Container {
   }
 
   //GameManagerによって、requestAnimationFrame毎に呼び出されるメソッド
-  public update(delta: number): void {
+  public update(deltaMS: number): void {
     this.elapsedFrameCount++;
     if (this.transitionIn.isActive()) {
-      this.transitionIn.update(delta);
+      this.transitionIn.update(deltaMS);
     } else if (this.transitionOut.isActive()) {
-      this.transitionOut.update(delta);
+      this.transitionOut.update(deltaMS);
     }
   }
 

@@ -37,29 +37,29 @@ export default class TitleScene extends Scene {
     sprite.height = renderer.height;
     this.addChild(sprite);
 
-    const text = new PIXI.Text(
-      "オクニコレクション２",
-      new PIXI.TextStyle({
+    const text = new PIXI.Text({
+      text: "オクニコレクション２",
+      style: new PIXI.TextStyle({
         fontFamily: "MisakiGothic",
         fontSize: 110,
         fill: 0xffffff,
         padding: 12,
         dropShadow: true,
       }),
-    );
+    });
     text.anchor.set(0.5, 0.5);
     text.position.set(renderer.width * 0.5, renderer.height * 0.4);
     this.addChild(text);
 
-    this.text = new PIXI.Text(
-      "TOUCH TO START",
-      new PIXI.TextStyle({
+    this.text = new PIXI.Text({
+      text: "TOUCH TO START",
+      style: new PIXI.TextStyle({
         fontFamily: "MisakiGothic",
         fontSize: 64,
         fill: 0xffffff,
         padding: 12,
       }),
-    );
+    });
     this.text.anchor.set(0.5, 0.5);
     this.text.position.set(renderer.width * 0.5, renderer.height * 0.6);
     this.addChild(this.text);

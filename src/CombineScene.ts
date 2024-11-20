@@ -6,7 +6,7 @@ import Resource from "./Resources";
 import Country from "./Country";
 import Flag from "./Flag";
 import Circle from "./Circle";
-import { Assets } from "pixi.js";
+import { Assets, Text } from "pixi.js";
 import { Sound } from "@pixi/sound";
 
 export default class CombineScene extends Scene {
@@ -33,17 +33,16 @@ export default class CombineScene extends Scene {
 
     //背景色を設定
     const graphics = new PIXI.Graphics();
-    graphics.beginFill(0xffffcf);
-    graphics.drawRect(0, 0, renderer.width, renderer.height);
+    graphics.rect(0, 0, renderer.width, renderer.height).fill(0xffffcf);
     this.addChild(graphics);
-    this.progressText = new PIXI.Text(
-      "0/" + GameManager.instance.countries.size.toString(),
-      new PIXI.TextStyle({
+    this.progressText = new Text({
+      text: "0/" + GameManager.instance.countries.size.toString(),
+      style: {
         fontSize: 96,
         fill: 0x000000,
         padding: 6,
-      }),
-    );
+      },
+    });
     this.progressText.anchor.set(0.5, 0.5);
     this.progressText.position.set(renderer.width * 0.6, renderer.height * 0.9);
     this.addChild(this.progressText);
@@ -97,8 +96,7 @@ export default class CombineScene extends Scene {
     this.sidebar = new PIXI.Graphics();
     this.sidebar.x = renderer.width * (1 - this.SIDEBAR_WIDTH_RATIO);
     const sidebarWidth = renderer.width - this.sidebar.x;
-    this.sidebar.beginFill(0x7fff7f);
-    this.sidebar.drawRect(0, 0, sidebarWidth, renderer.height);
+    this.sidebar.rect(0, 0, sidebarWidth, renderer.height).fill(0x7fff7f);
     this.addChild(this.sidebar);
 
     //旗を追加
@@ -119,15 +117,15 @@ export default class CombineScene extends Scene {
       );
       sound.play({ volume: 0.3 });
 
-      const text = new PIXI.Text(
-        "ゲームクリア！",
-        new PIXI.TextStyle({
+      const text = new PIXI.Text({
+        text: "ゲームクリア！",
+        style: new PIXI.TextStyle({
           fontFamily: "MisakiGothic",
           fontSize: 128,
           fill: 0x000000,
           padding: 6,
         }),
-      );
+      });
       text.anchor.set(0.5, 0.5);
       const renderer = GameManager.instance.game.renderer;
       text.position.set(renderer.width / 2, renderer.height / 2);
