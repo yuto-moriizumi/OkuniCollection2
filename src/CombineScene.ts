@@ -2,15 +2,14 @@ import * as PIXI from "pixi.js";
 import Scene from "./Scene";
 import Fade from "./Fade";
 import GameManager from "./GameManager";
-import LoaderAddParam from "./LoaderAddParam";
 import Resource from "./Resources";
-import Sound from "./Sound";
 import Country from "./Country";
 import Flag from "./Flag";
 import Circle from "./Circle";
+import { Assets } from "pixi.js";
+import { Sound } from "@pixi/sound";
 
 export default class CombineScene extends Scene {
-  private sound: Sound | null = null;
   public sidebar: PIXI.Graphics;
   public circle: Circle;
   public mushimegane: PIXI.Sprite;
@@ -51,7 +50,7 @@ export default class CombineScene extends Scene {
   }
 
   //リソースリストを作成し返却する
-  protected createInitialResourceList(): (LoaderAddParam | string)[] {
+  protected createInitialResourceList(): string[] {
     const assets = super.createInitialResourceList();
     const staticResource = Resource.Static;
     assets.push(staticResource.Magic);
@@ -67,18 +66,15 @@ export default class CombineScene extends Scene {
   }
 
   //リソースがロードされたときのコールバック
-  protected onResourceLoaded(): void {
+  public onResourceLoaded(): void {
     super.onResourceLoaded();
-    const resources = GameManager.instance.game.loader.resources;
 
     //魔法陣を表示
-    this.circle = new Circle(this, resources[Resource.Static.Magic].texture);
+    this.circle = new Circle(this, Assets.get(Resource.Static.Magic));
     this.addChild(this.circle);
 
     //虫眼鏡を表示
-    this.mushimegane = new PIXI.Sprite(
-      resources[Resource.Static.Mushimegane].texture,
-    );
+    this.mushimegane = new PIXI.Sprite(Assets.get(Resource.Static.Mushimegane));
 
     const renderer = GameManager.instance.game.renderer;
     this.mushimegane.position.set(renderer.width * 0.6, renderer.height * 0.15);
@@ -106,7 +102,6 @@ export default class CombineScene extends Scene {
     this.addChild(this.sidebar);
 
     //旗を追加
-    const resources = GameManager.instance.game.loader.resources;
     this.sidebarFlags = [];
     GameManager.instance.countries.forEach((country) => {
       if (!country.isOwn) return;
@@ -118,13 +113,11 @@ export default class CombineScene extends Scene {
 
     //クリア判定
     if (this.sidebarFlags.length === GameManager.instance.countries.size) {
-      const resources = GameManager.instance.game.loader.resources;
       //SEを再生
-      const sound = new Sound(
-        resources[Resource.Static.Audio.SE.onClear]["buffer"],
+      const sound = Sound.from(
+        Assets.resolver.resolveUrl(Resource.Static.Audio.SE.onClear),
       );
-      sound.volume = 0.3;
-      sound.play(false);
+      sound.play({ volume: 0.3 });
 
       const text = new PIXI.Text(
         "ゲームクリア！",
@@ -158,7 +151,7 @@ export default class CombineScene extends Scene {
 
     let i = 0;
     for (const country of this.sidebarFlags) {
-      const flag = new Flag(country, resources[country.img].texture);
+      const flag = new Flag(country, Assets.get(country.img));
       flag.scene = this;
       flag.setDraggable(true, country.id);
       flag.setOriginalPos(
@@ -175,13 +168,11 @@ export default class CombineScene extends Scene {
   }
 
   public onKingdomOfYugoslavia() {
-    const resources = GameManager.instance.game.loader.resources;
     //BGMを再生
-    this.sound = new Sound(
-      resources[Resource.Static.Audio.Bgm.CombineScene]["buffer"],
+    const sound = Sound.from(
+      Assets.resolver.resolveUrl(Resource.Static.Audio.Bgm.CombineScene),
     );
-    this.sound.volume = 0.25;
-    this.sound.play(false);
+    sound.play({ volume: 0.25 });
   }
   public update(dt: number) {
     super.update(dt);

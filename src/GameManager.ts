@@ -1,9 +1,7 @@
 import * as PIXI from "pixi.js";
 import Scene from "./Scene";
-import SoundManager from "./SoundManager";
 import Country from "./Country";
-import { EventSystem } from "@pixi/events";
-import { extensions, InteractionManager } from "pixi.js";
+import { Assets } from "pixi.js";
 
 export default class GameManager {
   public static instance: GameManager;
@@ -20,24 +18,18 @@ export default class GameManager {
     this.game = app;
   }
 
-  public static start(params: {
+  public static async start(params: {
     glWidth: number;
     glHeight: number;
     backgroundColor: number;
-  }): void {
-    extensions.remove(InteractionManager);
-    const game = new PIXI.Application({
+  }) {
+    const game = new PIXI.Application<HTMLCanvasElement>({
       width: params.glWidth,
       height: params.glHeight,
       backgroundColor: params.backgroundColor,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    game;
-    // game.hoge
-    game.renderer.addSystem(EventSystem, "events");
-
     //PIXI.ApplicationインスタンスのloaderプロパティにbaseUrlを設定
-    game.loader.baseUrl = "assets/";
+    await Assets.init({ basePath: "assets/" });
     GameManager.instance = new GameManager(game);
     document.body.appendChild(game.view);
     game.ticker.add((delta: number) => {
@@ -45,7 +37,6 @@ export default class GameManager {
         this.instance.currentScene.update(delta);
       }
     });
-    SoundManager.init();
 
     //国情報をロード
     const req = new XMLHttpRequest();
@@ -56,7 +47,6 @@ export default class GameManager {
       const json = JSON.parse(req.responseText);
       for (const key in json) {
         const country = json[key];
-        console.log([key, country]);
         const id = parseInt(key);
         this.instance.countries.set(id, new Country(id, country));
       }
@@ -86,26 +76,28 @@ export default class GameManager {
   //シーンをロードする
   //新しいシーンのリソース読み込みと、古いシーンのトランジションを同時に開始する
   //いずれも完了したら、新しいシーンのトランジションを開始する
-  public static loadScene(newScene: Scene): void {
+  public static async loadScene(newScene: Scene) {
     const instance = GameManager.instance;
     if (instance.currentScene) {
       //現在のシーンがセットされているなら
       instance.sceneResourceLoaded = false;
       instance.sceneTransitionOutFinished = false;
-      newScene.beginLoadResource(() => {
-        instance.sceneResourceLoaded = true;
-        GameManager.transitionInIfPossible(newScene);
-      });
+
+      await newScene.beginLoadResource();
+      instance.sceneResourceLoaded = true;
+      GameManager.transitionInIfPossible(newScene);
+      newScene.onResourceLoaded();
+
       instance.currentScene.beginTransitionOut(() => {
         instance.sceneTransitionOutFinished = true;
         GameManager.transitionInIfPossible(newScene);
       });
     } else {
       instance.sceneTransitionOutFinished = true;
-      newScene.beginLoadResource(() => {
-        instance.sceneResourceLoaded = true;
-        GameManager.transitionInIfPossible(newScene);
-      });
+      await newScene.beginLoadResource();
+      instance.sceneResourceLoaded = true;
+      GameManager.transitionInIfPossible(newScene);
+      newScene.onResourceLoaded();
     }
   }
 }
