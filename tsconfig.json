@@ -16,7 +16,11 @@
     "noFallthroughCasesInSwitch": false,
     "noUnusedLocals": false, //未使用変数でエラーを出さない
     "noUnusedParameters": false,
-    "preserveConstEnums": false
+    "preserveConstEnums": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules"],
+  "files": ["global.d.ts"]
 }

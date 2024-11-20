@@ -2,6 +2,8 @@ import * as PIXI from "pixi.js";
 import Scene from "./Scene";
 import SoundManager from "./SoundManager";
 import Country from "./Country";
+import { EventSystem } from "@pixi/events";
+import { extensions, InteractionManager } from "pixi.js";
 
 export default class GameManager {
   public static instance: GameManager;
@@ -23,11 +25,17 @@ export default class GameManager {
     glHeight: number;
     backgroundColor: number;
   }): void {
+    extensions.remove(InteractionManager);
     const game = new PIXI.Application({
       width: params.glWidth,
       height: params.glHeight,
       backgroundColor: params.backgroundColor,
     });
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    game;
+    // game.hoge
+    game.renderer.addSystem(EventSystem, "events");
+
     //PIXI.ApplicationインスタンスのloaderプロパティにbaseUrlを設定
     game.loader.baseUrl = "assets/";
     GameManager.instance = new GameManager(game);
