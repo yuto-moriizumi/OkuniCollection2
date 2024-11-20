@@ -98,7 +98,7 @@ export default class SoundManager {
       if (extension && supportedExtensions.indexOf(extension) !== -1) {
         //リソースにbufferという名前でプロパティを増やす
         SoundManager[methodName](resource.data, (buf: AudioBuffer) => {
-          resource.buffer = buf;
+          resource["buffer"] = buf;
           next();
         });
       } else next();

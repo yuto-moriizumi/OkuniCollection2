@@ -1,8 +1,10 @@
 import * as PIXI from "pixi.js";
 import CombineScene from "./CombineScene";
 import Country from "./Country";
+import { Sprite } from "pixi.js";
+import { FederatedPointerEvent } from "@pixi/events";
 
-export default class Flag extends PIXI.Sprite {
+export default class Flag extends Sprite {
   public flagFirstX: number;
   public flagFirstY: number;
   public scene: CombineScene;
@@ -30,41 +32,37 @@ export default class Flag extends PIXI.Sprite {
     if (boolean) {
       this.buttonMode = true;
       this.interactive = true;
-      this.on("mousedown", (e: PIXI.InteractionEvent) =>
-        this.onFlagClicked(e, id),
-      );
+      this.on("mousedown", (e) => this.onFlagClicked(e, id));
     }
   }
 
-  public onFlagClicked(e: PIXI.InteractionEvent, id: number) {
+  public onFlagClicked(e: FederatedPointerEvent, id: number) {
     const sprite = e.currentTarget as PIXI.Sprite;
     sprite.off("mousedown");
-    const localPosition = e.data.getLocalPosition(sprite);
-    const position = e.data.getLocalPosition(this.scene);
+    const localPosition = e.offset;
+    const position = e.screen;
     sprite.setParent(this.scene);
     sprite.x = position.x - localPosition.x * sprite.scale.x;
     sprite.y = position.y - localPosition.y * sprite.scale.y;
     this.flagFirstX = localPosition.x * sprite.scale.x;
     this.flagFirstY = localPosition.y * sprite.scale.y;
     //console.log(["moveto", sprite.x, sprite.y]);
-    sprite.on("mousemove", (e: PIXI.InteractionEvent) => this.onFlagMove(e));
-    sprite.on("mouseup", (e: PIXI.InteractionEvent) => this.onFlagUp(e, id));
+    sprite.on("mousemove", (e) => this.onFlagMove(e));
+    sprite.on("mouseup", (e) => this.onFlagUp(e, id));
   }
 
-  private onFlagMove(e: PIXI.InteractionEvent) {
+  private onFlagMove(e: FederatedPointerEvent) {
     const sprite = e.currentTarget as PIXI.Sprite;
-    const position = e.data.getLocalPosition(this.scene);
+    const position = e.screen;
     sprite.x = position.x - this.flagFirstX;
     sprite.y = position.y - this.flagFirstY;
   }
 
-  private onFlagUp(e: PIXI.InteractionEvent, id: number) {
+  private onFlagUp(e: FederatedPointerEvent, id: number) {
     const sprite = e.currentTarget as PIXI.Sprite;
     sprite.off("mousemove");
     sprite.off("mouseup");
-    sprite.on("mousedown", (e: PIXI.InteractionEvent) =>
-      this.onFlagClicked(e, id),
-    );
+    sprite.on("mousedown", (e) => this.onFlagClicked(e, id));
 
     //魔法陣の中に入ったか計算
     const circleCenterX = this.scene.circle.x;
@@ -77,11 +75,7 @@ export default class Flag extends PIXI.Sprite {
       Math.pow(radius, 2)
     ) {
       //魔法陣の中に入っていたら
-      this.scene.circle.addFlag(
-        this,
-        true,
-        e.data.getLocalPosition(this.scene.circle),
-      );
+      this.scene.circle.addFlag(this, true, e.offset);
       return;
     }
     //入っていなかったら

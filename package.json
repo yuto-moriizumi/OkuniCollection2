@@ -25,9 +25,10 @@
     "webpack-dev-server": "^5.1.0"
   },
   "dependencies": {
+    "@pixi/events": "^6.5.10",
     "detect-browser": "^5.3.0",
-    "pixi-filters": "^3.2.2",
-    "pixi.js": "^5.3.12",
+    "pixi-filters": "^4.2.0",
+    "pixi.js": "^6.5.10",
     "webfontloader": "^1.6.28"
   }
 }
