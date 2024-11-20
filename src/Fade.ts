@@ -17,16 +17,10 @@ export default class Fade implements Transition {
     this.alphaTo = alphaTo;
     this.alphaProgress = alphaProgress;
 
-    const width = GameManager.instance.game.view.width;
-    const height = GameManager.instance.game.view.height;
+    const width = GameManager.instance.game.canvas.width;
+    const height = GameManager.instance.game.canvas.height;
 
-    this.overlay.beginFill(0x000000);
-    this.overlay.moveTo(0, 0);
-    this.overlay.lineTo(width, 0);
-    this.overlay.lineTo(width, height);
-    this.overlay.lineTo(0, height);
-    this.overlay.endFill();
-
+    this.overlay.rect(0, 0, width, height).fill(0x000000);
     this.overlay.alpha = this.alphaFrom;
     this.container.addChild(this.overlay);
   }

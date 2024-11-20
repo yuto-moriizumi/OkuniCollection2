@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import Scene from "./Scene";
 import Country from "./Country";
-import { Assets } from "pixi.js";
+import { Application, Assets } from "pixi.js";
 
 export default class GameManager {
   public static instance: GameManager;
@@ -23,7 +23,8 @@ export default class GameManager {
     glHeight: number;
     backgroundColor: number;
   }) {
-    const game = new PIXI.Application<HTMLCanvasElement>({
+    const game = new Application();
+    await game.init({
       width: params.glWidth,
       height: params.glHeight,
       backgroundColor: params.backgroundColor,
@@ -31,10 +32,10 @@ export default class GameManager {
     //PIXI.ApplicationインスタンスのloaderプロパティにbaseUrlを設定
     await Assets.init({ basePath: "assets/" });
     GameManager.instance = new GameManager(game);
-    document.body.appendChild(game.view);
-    game.ticker.add((delta: number) => {
+    document.body.appendChild(game.canvas);
+    game.ticker.add(({ deltaMS }) => {
       if (this.instance.currentScene) {
-        this.instance.currentScene.update(delta);
+        this.instance.currentScene.update(deltaMS);
       }
     });
 

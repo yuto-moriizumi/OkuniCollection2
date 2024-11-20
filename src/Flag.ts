@@ -1,8 +1,7 @@
 import * as PIXI from "pixi.js";
 import CombineScene from "./CombineScene";
 import Country from "./Country";
-import { Sprite } from "pixi.js";
-import { FederatedPointerEvent } from "@pixi/events";
+import { FederatedPointerEvent, Sprite } from "pixi.js";
 
 export default class Flag extends Sprite {
   public flagFirstX: number;
@@ -37,16 +36,19 @@ export default class Flag extends Sprite {
   }
 
   public onFlagClicked(e: FederatedPointerEvent, id: number) {
-    const sprite = e.currentTarget as PIXI.Sprite;
+    if (!(e.currentTarget instanceof Sprite)) {
+      console.error("currentTarget is not Sprite");
+      return;
+    }
+    const sprite = e.currentTarget;
     sprite.off("mousedown");
     const localPosition = e.offset;
     const position = e.screen;
-    sprite.setParent(this.scene);
+    this.scene.addChild(sprite);
     sprite.x = position.x - localPosition.x * sprite.scale.x;
     sprite.y = position.y - localPosition.y * sprite.scale.y;
     this.flagFirstX = localPosition.x * sprite.scale.x;
     this.flagFirstY = localPosition.y * sprite.scale.y;
-    //console.log(["moveto", sprite.x, sprite.y]);
     sprite.on("mousemove", (e) => this.onFlagMove(e));
     sprite.on("mouseup", (e) => this.onFlagUp(e, id));
   }
