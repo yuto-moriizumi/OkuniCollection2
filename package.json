@@ -14,7 +14,7 @@
   "license": "ISC",
   "devDependencies": {
     "eslint": "^9.39.1",
-    "prettier": "^3.7.3",
+    "prettier": "^3.7.4",
     "ts-loader": "^9.5.4",
     "tslint-config-airbnb": "^5.11.2",
     "typedoc": "^0.28.15",
