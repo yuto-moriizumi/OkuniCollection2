@@ -15,7 +15,7 @@
   "devDependencies": {
     "eslint": "^9.39.2",
     "prettier": "^3.8.1",
-    "ts-loader": "^9.5.4",
+    "ts-loader": "^9.5.7",
     "tslint-config-airbnb": "^5.11.2",
     "typedoc": "^0.28.18",
     "typescript": "^5.9.3",
